@@ -1,0 +1,10 @@
+{
+    "items": [
+    
+    {
+        "category": "Panel",
+        "cls_name": "CAST.view.container.Panel",
+        "screen_name": "パネル",
+        "explanation": "コンテナパネル"
+   }]
+}

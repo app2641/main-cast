@@ -1,0 +1,27 @@
+
+* {
+    font-family: "mplus-1c-regular", "Lucida Grande", "Lucida Sans Unicode", Tahoma, "HiraMaruPro-W4", "ヒラギノ丸ゴ Pro W4", "Hiragino Kaku Gothic Pro", "HG丸ゴシックM-PRO", sans-serif;
+}
+
+html, body {
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+}
+
+
+div.clear {
+    clear: both;
+}
+
+
+
+/* LoadMask */
+.x-mask {
+    z-index: 50000;
+}
+
+.x-mask-msg {
+    z-index: 51000;
+}

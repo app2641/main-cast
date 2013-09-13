@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Sorry!</title>
+        <link href="/favicon.ico" rel="favicon" >
+        <link rel="stylesheet" type="text/css" media="screen" href="/resources/css/main.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="/resources/css/error.css" />
+    </head>
+    <body>
+        <h2 class="f-bold">Sorry!</h2>
+
+
+        <div class="errors">
+        
+            <?php if ($this->debug === true): ?>
+
+            <p class="f-bold error-title">Throw Message: "<?php echo $this->exception->getMessage() ?>"</p>
+            <p class="f-bold error-title"><?php echo $this->exception->getFile() . ': line ' . $this->exception->getLine() ?></p>
+
+            <p style="padding-top: 20px;">stack trace</p>
+
+            <table>
+                <?php foreach($this->exception->getTrace() as $k => $t): ?>
+                <?php if ($k % 2 == 0): ?>
+                <tr class="even">
+                <?php else: ?>
+                <tr class="odd">
+                <?php endif; ?>
+                    <td><p>
+                        Class: <?php echo $t['class'] ?><br />
+                        Method: <?php echo $t['function'] ?><br /><br />
+                        <?php echo $t['file'] . ': line ' . $t['line'] ?>
+                    </p></td>
+                </tr>
+                <?php endforeach; ?>
+            </table>
+            
+            <?php else: ?>
+
+            <p class="f-bold error-title">Contents is not found!</p>
+
+            <a href="/">Go to toppage.</a>
+
+            <?php endif; ?>
+
+        </div>
+    </body>
+</html>

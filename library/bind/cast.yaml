@@ -1,0 +1,15 @@
+
+dest: public_html/resources/js/cast/app.js
+
+path: public_html/src/
+
+src:
+
+    # singleton
+    - app/Events.js
+    - app/Controllers.js
+
+
+    
+
+    - app.js

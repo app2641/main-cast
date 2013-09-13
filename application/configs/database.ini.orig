@@ -1,0 +1,14 @@
+[database]
+db.db       = "database"
+db.host     = "localhost"
+db.username = "root"
+db.password = "root"
+db.charset  = "UTF8"
+
+
+[test]
+db.db       = "database_tests"
+db.host     = "localhost"
+db.username = "root"
+db.password = "root"
+db.charset  = "UTF8"

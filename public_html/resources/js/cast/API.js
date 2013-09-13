@@ -1,0 +1,1 @@
+CAST.REMOTING_API={url:'/direct.php',type:'remoting',timeout:'300000',actions:{User:[]}};

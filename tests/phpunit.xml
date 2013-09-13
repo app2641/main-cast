@@ -1,0 +1,28 @@
+<phpunit bootstrap="./TestsBootstrap.php" colors="true" >
+
+    <!-- Direct -->
+    <testsuite name="CAST Direct TestSuite">
+        <directory>./application</directory>
+    </testsuite>
+
+    <!-- Library -->
+    <testsuite name="CAST Liberay TestSuite">
+        <directory>./library</directory>
+    </testsuite>
+
+
+    <filter>
+        <!-- If Zend Framework is inside your project's library, uncomment this filter -->
+        <whitelist>
+            <directory suffix=".php">../application/modules/direct</directory>
+            <directory suffix=".php">../library/Cast</directory>
+            <exclude>
+                <directory suffix=".php">../library/Cast/Commands</directory>
+                <file>../library/Cast/Model/AbstractModel.php</file>
+                <file>../library/Cast/Model/Column/ColumnInterface.php</file>
+                <file>../library/Cast/Model/Query/QueryInterface.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+
+</phpunit>

@@ -4,3 +4,6 @@ README.txt
 demos/
 extras/documentation
 
+application/configs/database.ini
+public_html/resources/image/cast/*
+
