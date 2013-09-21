@@ -8,7 +8,14 @@ class ContentsColumn implements ColumnInterface
     protected
         $columns = array(
             'id',
+            'cast_id',
             'title',
+            'description',
+            'device',
+            'duration',
+            'sale_date',
+            'maker',
+            'label',
             'package',
             'url'
         );

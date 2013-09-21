@@ -3,10 +3,12 @@
 set_include_path('../library' . PATH_SEPARATOR . get_include_path());
 
 require_once 'Zend/Application.php';
-require_once 'Zend/Loader/Autoloader.php';
-$autoloader = Zend_Loader_Autoloader::getInstance();
-$autoloader->unregisterNamespace(array('Zend_', 'ZendX_'))
-           ->setFallbackAutoloader(true);
+require_once 'Symfony/Component/ClassLoader/UniversalClassLoader.php';
+
+$autoloader = new UniversalClassLoader;
+$autoloader->registerNamespaces(array('Cast'  => ROOT_PATH . '/library'));
+$autoloader->useIncludePath(true);
+$autoloader->register();
 
 
 defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));

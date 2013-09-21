@@ -39,6 +39,14 @@ class ContentsQuery implements QueryInterface
                 }
             }
 
+            $sql = 'INSERT INTO contents
+                (cast_id, title, description, device,
+                    duration, sale_date, maker, label, package, url)
+                VALUES (:cast_id, :title, :description, :device,
+                    :duration, :sale_date, :maker, :label, :package, :url)';
+
+            $this->db->state($sql, $params);
+
         } catch (\Exception $e) {
             throw $e;
         }
@@ -90,9 +98,58 @@ class ContentsQuery implements QueryInterface
     public final function fetchById ($id)
     {
         try {
-            $sql = '';
+            $sql = 'SELECT * FROM contents
+                WHERE contents.id = ?';
 
             $result = $this->db->state($sql, $id)->fetch();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $result;
+    }
+
+
+
+    /**
+     * 指定タイトルのレコードを取得する
+     *
+     * @author app2641
+     **/
+    public function fetchByTitle ($title)
+    {
+        try {
+            $sql = 'SELECT * FROM contents
+                WHERE contents.title = ?';
+
+            $result = $this->db->state($sql, $title)->fetch();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $result;
+    }
+
+
+
+    /**
+     * タイトルとキャストIDからコンテンツを取得する
+     *
+     * @param string $title  コンテンツタイトル
+     * @param int $cast_id  キャストのid
+     * @author app2641
+     **/
+    public function fetchByTitleWithCastId ($title, $cast_id)
+    {
+        try {
+            $sql = 'SELECT * FROM contents
+                WHERE contents.title = ?
+                AND contents.cast_id = ?';
+
+            $result = $this->db
+                ->state($sql, array($title, $cast_id))->fetch();
         
         } catch (\Exception $e) {
             throw $e;

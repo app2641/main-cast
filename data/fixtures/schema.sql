@@ -29,7 +29,7 @@ CREATE TABLE `cast` (
   `url` varchar(255) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
-  KEY `name` (`name`),
+  UNIQUE KEY `name_2` (`name`),
   KEY `furigana` (`furigana`),
   KEY `is_active` (`is_active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -44,11 +44,19 @@ DROP TABLE IF EXISTS `contents`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `cast_id` int(11) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
+  `description` text,
+  `device` varchar(100) DEFAULT NULL,
+  `duration` varchar(100) DEFAULT NULL,
+  `sale_date` varchar(20) DEFAULT NULL,
+  `maker` varchar(100) DEFAULT NULL,
+  `label` varchar(100) DEFAULT NULL,
   `package` varchar(100) DEFAULT NULL,
   `url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `title` (`title`)
+  UNIQUE KEY `title_2` (`title`),
+  KEY `cast_id` (`cast_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -61,4 +69,4 @@ CREATE TABLE `contents` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-13 11:58:27
+-- Dump completed on 2013-09-21 11:41:53

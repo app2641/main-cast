@@ -2,6 +2,7 @@
 <?php
 
 use Cast\CLI;
+use Symfony\Component\ClassLoader\UniversalClassLoader;
 
 try {
     define('DS', DIRECTORY_SEPARATOR);
@@ -14,15 +15,15 @@ try {
     set_include_path(dirname(__FILE__) . '/library' . PATH_SEPARATOR . get_include_path());
 
 
+    require_once 'Cast/CLI.php';
+    require_once 'Symfony/Component/ClassLoader/UniversalClassLoader.php';
+
+    $autoloader = new UniversalClassLoader;
+    $autoloader->registerNamespaces(array('Cast'  => ROOT_PATH . '/library'));
+    $autoloader->useIncludePath(true);
+    $autoloader->register();
 
     chdir(dirname(__FILE__));
-    require_once ('Zend/Loader/Autoloader.php');
-    require_once ('Cast/CLI.php');
-
-
-    $autoloader = Zend_Loader_Autoloader::getInstance();
-    $autoloader->setFallbackAutoloader(true);
-
     $cli = CLI::getInstance();
 
     if (count($argv) > 1) {
