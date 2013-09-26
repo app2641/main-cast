@@ -70,6 +70,16 @@ class CastQuery implements QueryInterface
                 }
             }
 
+            $sql = 'UPDATE cast
+                SET name = :name,
+                furigana = :furigana,
+                url = :url,
+                search_index = :search_index,
+                is_active = :is_active
+                WHERE cast.id = :id';
+
+            $this->db->state($sql, $record);
+
         } catch (\Exception $e) {
             throw $e;
         }
@@ -111,6 +121,26 @@ class CastQuery implements QueryInterface
 
 
     /**
+     * レコードを全取得する
+     *
+     * @author app2641
+     **/
+    public function fetchAll ()
+    {
+        try {
+            $sql = 'SELECT * FROM cast';
+            $results = $this->db->state($sql)->fetchAll();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $results;
+    }
+
+
+
+    /**
      * 指定した名前を持つレコードを取得する
      *
      * @param string $name  女優名
@@ -129,5 +159,28 @@ class CastQuery implements QueryInterface
         }
 
         return $result;
+    }
+
+
+
+    /**
+     * 検索インデックスを作成していないキャスト群を取得する
+     *
+     * @author app2641
+     **/
+    public function notSearchIndexCasts ()
+    {
+        try {
+            $sql = 'SELECT * FROM cast
+                WHERE cast.search_index = ?';
+
+            $results = $this->db
+                ->state($sql, false)->fetchAll();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $results;
     }
 }

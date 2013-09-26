@@ -11,6 +11,7 @@ class CastColumn implements ColumnInterface
             'name',
             'furigana',
             'url',
+            'search_index',
             'is_active'
         );
 

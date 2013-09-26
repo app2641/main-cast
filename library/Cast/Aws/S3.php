@@ -69,4 +69,53 @@ class S3 extends \AmazonS3
             throw $e;
         }
     }
+
+
+
+    /**
+     * 指定文字列の検索インデックスを取得する
+     *
+     * @param string $string  検索クエリ文字列
+     * @author app2641
+     **/
+    public function getSearchIndex ($string)
+    {
+        mb_internal_encoding('UTF-8');
+
+        $path = 'resources/json/search/'.mb_strlen($string).'/'.$string.'/result.json';
+
+        $response = $this->get_object(
+            $this::BUCKET,
+            $path
+        );
+
+        return $response;
+    }
+
+
+
+    /**
+     * 指定文字列の検索インデックスをS3に保存する
+     *
+     * @param string $string  検索クエリ文字列
+     * @param array $json  検索インデックスの配列
+     * @author app2641
+     **/
+    public function uploadSearchIndex ($string, $json)
+    {
+        mb_internal_encoding('UTF-8');
+
+        $json = json_encode($json);
+        $path = 'resources/json/search/'.mb_strlen($string).'/'.$string.'/result.json';
+
+        $response = $this->create_object(
+            $this::BUCKET,
+            $path,
+            array(
+                'body' => $json
+            )
+        );
+
+        return $response;
+    }
 }
