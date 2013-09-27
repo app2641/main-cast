@@ -7,4 +7,5 @@ extras/documentation
 application/configs/database.ini
 application/configs/aws.ini
 public_html/resources/image/cast/*
+resources/json/search/*
 
