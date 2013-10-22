@@ -12,6 +12,15 @@ try {
     define('APPLICATION_PATH', ROOT_PATH . '/application');
     defined('APPLICATION_ENV') || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
+
+    // ローカル環境かリモート環境か
+    if (preg_match('/^\/Users\/(suguru|app2641)/', ROOT_PATH)) {
+        defined('IS_LOCAL') || define('IS_LOCAL', true);
+    } else {
+        defined('IS_LOCAL') || define('IS_LOCAL', false);
+    }
+
+
     set_include_path(dirname(__FILE__) . '/library' . PATH_SEPARATOR . get_include_path());
 
 

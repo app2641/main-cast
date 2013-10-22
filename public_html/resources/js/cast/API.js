@@ -1,1 +1,1 @@
-CAST.REMOTING_API={url:'/direct.php',type:'remoting',timeout:'300000',actions:{User:[]}};
+CAST.REMOTING_API={url:'/direct.php',type:'remoting',timeout:'300000',actions:{Cast:[{name:'getList',len:1},{name:'updateIsActive',len:1},{name:'getDupiicateCastList',len:1}]}};

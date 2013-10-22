@@ -13,16 +13,34 @@ class Profile extends ParserAbstract implements ParserInterface
      *
      * @author app2641
      **/
-    protected $url;
+    protected $url = 'http://actress.dmm.co.jp/-/detail/=/actress_id=%s';
 
 
 
     /**
-     * キャスト情報を格納したstdClassクラス
+     * キャストレコード
      *
      * @author app2641
      **/
-    protected $cast;
+    protected $cast = false;
+
+
+
+    /**
+     * キャストID
+     *
+     * @author app2641
+     **/
+    protected $cast_id;
+
+
+
+    /**
+     * 加工前のキャスト名
+     *
+     * @author app2641
+     **/
+    protected $raw_name;
 
 
 
@@ -48,47 +66,52 @@ class Profile extends ParserAbstract implements ParserInterface
     {
         try {
             set_time_limit(0);
-            $conn = \Zend_Registry::get('db');
-            $conn->beginTransaction();
+            $db = \Zend_Registry::get('db');
+            $db->beginTransaction();
         
             $this->html = file_get_html($this->url);
 
-            $this->getFurigana();
-            $this->getImage();
+            $this->parseName();
+            $this->parseFurigana();
+            $this->parseCastImage();
             $this->InsertCast();
             
-        
-            $conn->commit();
+            $db->commit();
         
         } catch (\Exception $e) {
-            $conn->rollBack();
+            $db->rollBack();
             throw $e;
         }
-    }
 
-
-
-    /**
-     * キャスト名を設定する
-     *
-     * @param string $name  キャスト名
-     * @author app2641
-     **/
-    public function setName ($name)
-    {
-        $this->name = $name;
-    }
-
-
-
-    /**
-     * キャスト情報を取得する
-     *
-     * @author app2641
-     **/
-    public function getCast ()
-    {
         return $this->cast;
+    }
+
+
+
+    /**
+     * キャストIDをセットする
+     *
+     * @param int $cast_id  キャストID
+     * @author app2641
+     **/
+    public function setCastId ($cast_id)
+    {
+        $this->cast_id = $cast_id;
+        $this->url = sprintf($this->url, $cast_id);
+    }
+
+
+
+
+    /**
+     * キャスト名を解析して取得する
+     *
+     * @author app2641
+     **/
+    public function parseName ()
+    {
+        $this->raw_name = $this->_encode($this->html->find('table tbody tr td h1', 0)->plaintext);
+        $this->name = preg_replace('/（.*$/', '', $this->raw_name);
     }
 
 
@@ -98,11 +121,10 @@ class Profile extends ParserAbstract implements ParserInterface
      *
      * @author app2641
      **/
-    public function getFurigana ()
+    public function parseFurigana ()
     {
-        $cast_name = $this->_encode($this->html->find('table tbody tr td h1', 0)->plaintext);
-        $furigana  = str_replace('）', '', str_replace($this->name.'（', '', $cast_name));
-        $this->furigana = $furigana;
+        preg_match('/（(.*)）/', $this->raw_name, $matches);
+        $this->furigana = $matches[1];
     }
 
 
@@ -112,11 +134,12 @@ class Profile extends ParserAbstract implements ParserInterface
      *
      * @author app2641
      **/
-    public function getImage ()
+    public function parseCastImage ()
     {
         // 画像パスを取得
         $img_src = $this->html->find('table tbody tr td img[width="125"]', 0)->getAttribute('src');
         $img_name = md5($this->name);
+        $parent_dir = substr($img_name, 0, 1);
         $download_path = '/tmp/cast/'.$img_name.'.jpg';
 
         if (! is_dir('/tmp/cast')) {
@@ -130,21 +153,50 @@ class Profile extends ParserAbstract implements ParserInterface
         exec($command);
 
 
-        // ダウンロードした画像をS3へ保存
-        $S3 = new S3();
 
-        $parent_dir = substr($img_name, 0, 1);
-        $response = $S3->create_object(
-            $S3::BUCKET,
-            'resources/images/cast/'.$parent_dir.'/'.$img_name.'.jpg',
-            array(
-                'fileUpload' => $download_path
-            )
-        );
+        // ローカル環境かどうかで画像の保存場所を変える
+        if (IS_LOCAL) {
+            // ローカルの場合
+            $parent_path = ROOT_PATH.'/public_html/resources/images/cast/'.$parent_dir;
+            $img_path = $parent_path.'/'.$img_name.'.jpg';
+
+            // 親ディレクトリの確認
+            if (! is_dir($parent_path)) {
+                mkdir($parent_path);
+                chmod($parent_path, 0777);
+            }
+
+            // 既にファイルがあるかどうかを確認
+            if (! file_exists($img_path)) {
+                copy($download_path, $img_path);
+            }
+        
+        } else {
+            // リモートの場合
+            $S3 = new S3();
+
+            $response = $S3->get_object(
+                $S3::BUCKET,
+                'resources/images/cast/'.$parent_dir.'/'.$img_name.'.jpg'
+            );
+
+            if ($response->status == 404) {
+                // todo
+            }
 
 
-        if (! $response->isOK()) {
-            echo 'プロフィール画像の保存に失敗しました！'.PHP_EOL;
+            $response = $S3->create_object(
+                $S3::BUCKET,
+                'resources/images/cast/'.$parent_dir.'/'.$img_name.'.jpg',
+                array(
+                    'fileUpload' => $download_path
+                )
+            );
+
+
+            if (! $response->isOK()) {
+                echo 'プロフィール画像の保存に失敗しました！'.PHP_EOL;
+            }
         }
     }
 
@@ -162,31 +214,15 @@ class Profile extends ParserAbstract implements ParserInterface
 
         if (! $cast) {
             $params = new \stdClass;
+            $params->cast_id = $this->cast_id;
+            $params->dmm_name = $this->raw_name;
             $params->name = $this->name;
             $params->furigana = $this->furigana;
             $params->url = $this->url;
             $cast_model->insert($params);
 
-            $cast = $cast_model->getRecord();
-
-
-            // 新着情報を保管する
-            if (! \Zend_Registry::isRegistered('cast')) {
-                $data = array();
-                \Zend_Registry::set('cast', $data);
-            } else {
-                $data = \Zend_Registry::get('cast');
-            }
-
-            $data[] = array(
-                'name' => $this->name,
-                'furigana' => $this->furigana,
-                'url' => $this->url
-            );
-            \Zend_Registry::set('cast', $data);
+            $this->cast = $cast_model->getRecord();
         }
-
-        $this->cast = $cast;
     }
 
 

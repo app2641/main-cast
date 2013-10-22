@@ -18,6 +18,8 @@ class ImportCast extends Base\AbstractCommand
     public function execute (Array $params)
     {
         try {
+            echo '廉価版'.PHP_EOL;
+            exit();
             set_time_limit(0);
 
             $this->initDatabaseConnection();

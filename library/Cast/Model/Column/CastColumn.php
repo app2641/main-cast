@@ -8,6 +8,8 @@ class CastColumn implements ColumnInterface
     protected
         $columns = array(
             'id',
+            'cast_id',
+            'dmm_name',
             'name',
             'furigana',
             'url',

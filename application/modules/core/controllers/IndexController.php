@@ -21,4 +21,12 @@ class IndexController extends \Zend_Controller_Action
     {
         //$this->_helper->viewRenderer->setNoRender();
     }
+
+
+
+    public function editAction ()
+    {
+        $request = $this->getRequest();
+        $this->view->cast_id = $request->getParam('cast_id');
+    }
 }

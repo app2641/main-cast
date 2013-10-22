@@ -40,8 +40,8 @@ class CastQuery implements QueryInterface
             }
 
             $sql = 'INSERT INTO cast
-                (name, furigana, url)
-                VALUES (:name, :furigana, :url)';
+                (cast_id, dmm_name, name, furigana, url)
+                VALUES (:cast_id, :dmm_name, :name, :furigana, :url)';
 
             $this->db->state($sql, $params);
 
@@ -71,7 +71,9 @@ class CastQuery implements QueryInterface
             }
 
             $sql = 'UPDATE cast
-                SET name = :name,
+                SET cast_id = :cast_id,
+                dmm_name = :dmm_name,
+                name = :name,
                 furigana = :furigana,
                 url = :url,
                 search_index = :search_index,
@@ -164,6 +166,52 @@ class CastQuery implements QueryInterface
 
 
     /**
+     * 指定したDMM名を持つレコードを取得する
+     *
+     * @param string $dmm_name  DMM上でのキャスト名
+     * @author app2641
+     **/
+    public function fetchByDmmName ($dmm_name)
+    {
+        try {
+            $sql = 'SELECT * FROM cast
+                WHERE cast.dmm_name = ?';
+
+            $result = $this->db->state($sql, $dmm_name)->fetch();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $result;
+    }
+
+
+
+    /**
+     * 指定CastIdを持つレコードを取得する
+     *
+     * @param int $cast_id  DMM用のキャストID
+     * @author suguru
+     **/
+    public function fetchByCastId ($cast_id)
+    {
+        try {
+            $sql = 'SELECt * FROM cast
+                WHERE cast.cast_id = ?';
+
+            $result = $this->db->state($sql, $cast_id)->fetch();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $result;
+    }
+
+
+
+    /**
      * 検索インデックスを作成していないキャスト群を取得する
      *
      * @author app2641
@@ -182,5 +230,74 @@ class CastQuery implements QueryInterface
         }
 
         return $results;
+    }
+
+
+
+
+    /**
+     * キャストリストデータを取得する
+     *
+     * @param int $start  ページャスタート値
+     * @param int $limit  必要個数
+     * @param string $query  頭文字クエリ
+     * @author app2641
+     **/
+    public function getList ($start, $limit, $query = null)
+    {
+        try {
+            $sql = 'SELECT * FROM cast ';
+            $bind = array();
+
+            // 頭文字クエリ
+            if (! is_null($query)) {
+                $sql .= 'WHERE cast.furigana LIKE ? ';
+                $bind[] = $query.'%';
+            }
+
+
+            // ORDER BY句の記載
+            $sql .= 'ORDER BY cast.furigana ASC ';
+
+            // LINIT句の記載
+            $sql .= "LIMIT %s, %s";
+            $sql = sprintf($sql, $start, $limit);
+
+            $results = $this->db->state($sql, $bind)->fetchAll();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $results;
+    }
+
+
+
+    /**
+     * キャストリストデータの個数を取得する
+     *
+     * @param string $query  頭文字クエリ
+     * @author app2641
+     **/
+    public function getListCount ($query = null)
+    {
+        try {
+            $sql = 'SELECT count(cast.id) AS count
+                FROM cast ';
+            $bind = array();
+
+            if (! is_null($query)) {
+                $sql .= 'WHERE cast.furigana LIKE ? ';
+                $bind[] = $query.'%';
+            }
+
+            $result = $this->db->state($sql, $bind)->fetch();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $result->count;
     }
 }
