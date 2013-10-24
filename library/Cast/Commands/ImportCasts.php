@@ -56,7 +56,9 @@ class ImportCasts extends Base\AbstractCommand
                 unset($profile);
 
                 if (! $cast) {
-                    throw new \Exception('キャスト取得失敗 '.$profile_link);
+                    echo 'キャスト情報取得に失敗しました'.PHP_EOL;
+                    echo $profile_link.PHP_EOL.PHP_EOL;
+                    continue;
                 }
             }
 

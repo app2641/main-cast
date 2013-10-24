@@ -11,7 +11,11 @@
         <link href="/resources/js/extjs/4.1.1/resources/css/ext-all.css" rel="stylesheet" />
         <link href="/resources/css/main.css" rel="stylesheet" />
 
+        <?php if ($this->debug): ?>
+        <script type="text/javascript" src="/resources/js/extjs/4.1.1/ext-all-debug.js"></script>
+        <?php else: ?>
         <script type="text/javascript" src="/resources/js/extjs/4.1.1/ext-all.js"></script>
+        <?php endif; ?>
         <script type="text/javascript" src="/resources/js/extjs/4.1.1/locale/ext-lang-ja.js"></script>
 
         <script type="text/javascript">

@@ -16,6 +16,10 @@ Ext.define('CAST.view.edit.CastList', {
         me.buildStore();
         me.buildColumns();
 
+        Ext.apply(me, {
+            height: 600
+        });
+
         me.callParent(arguments);
     },
 
@@ -55,7 +59,7 @@ Ext.define('CAST.view.edit.CastList', {
         me.columns = [{
             text: 'id',
             dataIndex: 'id',
-            flex: 1
+            flex: 0.5
         }, {
             text: 'dmm_name',
             dataIndex: 'dmm_name',
@@ -67,7 +71,7 @@ Ext.define('CAST.view.edit.CastList', {
         }, {
             text: 'is_active',
             dataIndex: 'is_active',
-            flex: 1
+            flex: 0.5
         }];
     }
 

@@ -10,8 +10,14 @@ Ext.define('CAST.view.edit.Panel', {
     alias: 'widget.edit-Panel',
 
     requires: [
-        'CAST.view.edit.CastList'
+        'CAST.view.edit.CastList',
+        'CAST.view.edit.CastForm'
     ],
+
+
+    layout: 'border',
+    border: false,
+    height: 600,
 
 
     initComponent: function () {
@@ -20,7 +26,18 @@ Ext.define('CAST.view.edit.Panel', {
         Ext.apply(me, {
             items: [{
                 xtype: 'edit-CastList',
-                cast_id: me.cast_id
+                region: 'west',
+                split: true,
+                cast_id: me.cast_id,
+                width: 500
+            }, {
+                xtype: 'edit-CastForm',
+                region: 'center',
+                cast_id: me.cast_id,
+                split: true,
+                api: {
+                    load: Cast.loadCastData
+                }
             }]
         });
 

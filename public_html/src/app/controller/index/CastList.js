@@ -32,7 +32,7 @@ Ext.define('CAST.controller.index.CastList', {
                 },
 
 
-                itemdblclick: function (view, record, item, index, e) {
+                itemclick: function (view, record, item, index, e) {
                     window.open('/index/edit/cast_id/'+ record.raw.cast_id);
                 }
             }

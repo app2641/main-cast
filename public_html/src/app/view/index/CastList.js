@@ -67,11 +67,11 @@ Ext.define('CAST.view.index.CastList', {
         me.columns = [{
             text: 'id',
             dataIndex: 'id',
-            flex: 1
+            flex: 0.5
         }, {
             text: 'cast_id',
             dataIndex: 'cast_id',
-            flex: 1
+            flex: 0.5
         }, {
             text: 'dmm_name',
             dataIndex: 'dmm_name',
@@ -87,11 +87,11 @@ Ext.define('CAST.view.index.CastList', {
         }, {
             text: 'search_index',
             dataIndex: 'search_index',
-            flex: 1
+            flex: 0.5
         }, {
             text: 'is_active',
             dataIndex: 'is_active',
-            flex: 1
+            flex: 0.5
         }];
     },
 

@@ -70,6 +70,9 @@ class Profile extends ParserAbstract implements ParserInterface
             $db->beginTransaction();
         
             $this->html = file_get_html($this->url);
+            if ($this->html == false) {
+                throw new \Exception('プロフィールページの取得に失敗しました');
+            }
 
             $this->parseName();
             $this->parseFurigana();
@@ -80,7 +83,7 @@ class Profile extends ParserAbstract implements ParserInterface
         
         } catch (\Exception $e) {
             $db->rollBack();
-            throw $e;
+            echo $e->getMessage().PHP_EOL;
         }
 
         return $this->cast;
@@ -110,8 +113,13 @@ class Profile extends ParserAbstract implements ParserInterface
      **/
     public function parseName ()
     {
-        $this->raw_name = $this->_encode($this->html->find('table tbody tr td h1', 0)->plaintext);
-        $this->name = preg_replace('/（.*$/', '', $this->raw_name);
+        try {
+            $this->raw_name = $this->_encode($this->html->find('table tbody tr td h1', 0)->plaintext);
+            $this->name = preg_replace('/（.*$/', '', $this->raw_name);
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
 
@@ -218,7 +226,6 @@ class Profile extends ParserAbstract implements ParserInterface
             $params->dmm_name = $this->raw_name;
             $params->name = $this->name;
             $params->furigana = $this->furigana;
-            $params->url = $this->url;
             $cast_model->insert($params);
 
             $this->cast = $cast_model->getRecord();

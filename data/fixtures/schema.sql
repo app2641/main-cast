@@ -28,7 +28,6 @@ CREATE TABLE `cast` (
   `dmm_name` varchar(100) DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
   `furigana` varchar(100) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
   `search_index` tinyint(1) DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
@@ -75,4 +74,4 @@ CREATE TABLE `contents` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-10-22 14:03:49
+-- Dump completed on 2013-10-23 17:40:03

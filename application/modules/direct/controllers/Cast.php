@@ -62,9 +62,117 @@ class Cast
      *
      * @author app2641
      **/
-    public function getDupiicateCastList ($request)
+    public function getDuplicateCastList ($request)
     {
-        var_dump($request);
-        exit();
+        $container  = new Container(new ModelFactory);
+        $cast_model = $container->get('CastModel');
+
+        $results = $cast_model->query->fetchAllByCastId($request->cast_id);
+        return $results;
+    }
+
+
+
+    /**
+     * キャストデータをフォームにロードする
+     *
+     * @param int $id  キャストのid
+     * @author app2641
+     **/
+    public function loadCastData ($request)
+    {
+        $container  = new Container(new ModelFactory);
+        $cast_model = $container->get('CastModel');
+
+        $cast_model->fetchById($request->id);
+
+        return array('success' => true, 'data' => $cast_model->getRecord());
+    }
+
+
+
+    /**
+     * キャストデータを新規作成する
+     *
+     * @param stdClass $values  フォームデータ
+     * @author app2641
+     **/
+    public function createCastData ($request)
+    {
+        try {
+            $container  = new Container(new ModelFactory);
+            $cast_model = $container->get('CastModel');
+
+            $values = $request->values;
+            $cast = $cast_model->query->fetchByName($values->name);
+
+            if ($cast != false && $values->cast_id == $cast->cast_id) {
+                throw new \Exception('既に同じ名前が存在しています！');
+            }
+
+            $params = new \stdClass;
+            $params->cast_id = $values->cast_id;
+            $params->dmm_name = $values->dmm_name;
+            $params->name = $values->name;
+            $params->furigana = $values->furigana;
+            $cast_model->insert($params);
+
+        } catch (\Exception $e) {
+            return array('success' => false, 'msg' => $e->getMessage());
+        }
+
+        return array('success' => true);
+    }
+
+
+
+    /**
+     * キャストデータを更新する
+     *
+     * @param stdClass $values  フォームデータ
+     * @author app2641
+     **/
+    public function updateCastData ($request)
+    {
+        try {
+            $container  = new Container(new ModelFactory);
+            $cast_model = $container->get('CastModel');
+
+            $values = $request->values;
+            $cast_model->fetchById($values->id);
+
+            $cast_model->set('name', $values->name);
+            $cast_model->set('furigana', $values->furigana);
+            $cast_model->update();
+
+        } catch (\Exception $e) {
+            return array('success' => false, 'msg' => $e->getMessage());
+        }
+
+        return array('success' => true);
+    }
+
+
+
+    /**
+     * キャストデータの削除
+     *
+     * @param int $id  キャストid
+     * @author app2641
+     **/
+    public function deleteCastData ($request)
+    {
+        try {
+            $container  = new Container(new ModelFactory);
+            $cast_model = $container->get('CastModel');
+
+            $cast_model->fetchById($request->id);
+            $cast_model->delete();
+
+        } catch (\Exception $e) {
+            return array('success' => false, 'msg' => $e->getMessage());
+        }
+
+        return array('success' => true);
     }
 }

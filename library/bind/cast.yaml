@@ -10,6 +10,22 @@ src:
     - app/Controllers.js
 
 
+    # ux
+    - ux/form/SearchField.js
+
+
+
+    # contaller
+    - app/controller/index/CastList.js
+
+    - app/controller/edit/CastForm.js
+
+
+
+    # view
+    - app/view/index/CastList.js
+
+    - app/view/edit/CastForm.js
     
 
     - app.js

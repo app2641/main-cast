@@ -40,8 +40,8 @@ class CastQuery implements QueryInterface
             }
 
             $sql = 'INSERT INTO cast
-                (cast_id, dmm_name, name, furigana, url)
-                VALUES (:cast_id, :dmm_name, :name, :furigana, :url)';
+                (cast_id, dmm_name, name, furigana)
+                VALUES (:cast_id, :dmm_name, :name, :furigana)';
 
             $this->db->state($sql, $params);
 
@@ -75,7 +75,6 @@ class CastQuery implements QueryInterface
                 dmm_name = :dmm_name,
                 name = :name,
                 furigana = :furigana,
-                url = :url,
                 search_index = :search_index,
                 is_active = :is_active
                 WHERE cast.id = :id';
@@ -97,6 +96,17 @@ class CastQuery implements QueryInterface
     public final function delete (AbstractModel $model)
     {
         try {
+            $record = $model->getRecord();
+
+            foreach ($record as $key => $val) {
+                if (! in_array($key, $this->column->getColumns())) {
+                    throw new \Exception('invalid column!');
+                }
+            }
+
+            $sql = 'DELETE FROM cast
+                WHERE cast.id = ?';
+            $this->db->state($sql, $record->id);
         
         } catch (\Exception $e) {
             throw $e;
@@ -189,24 +199,24 @@ class CastQuery implements QueryInterface
 
 
     /**
-     * 指定CastIdを持つレコードを取得する
+     * 指定CastIdを持つレコードを全取得する
      *
      * @param int $cast_id  DMM用のキャストID
-     * @author suguru
+     * @author app2641
      **/
-    public function fetchByCastId ($cast_id)
+    public function fetchAllByCastId ($cast_id)
     {
         try {
             $sql = 'SELECt * FROM cast
                 WHERE cast.cast_id = ?';
 
-            $result = $this->db->state($sql, $cast_id)->fetch();
+            $results = $this->db->state($sql, $cast_id)->fetchAll();
         
         } catch (\Exception $e) {
             throw $e;
         }
 
-        return $result;
+        return $results;
     }
 
 
