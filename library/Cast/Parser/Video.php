@@ -9,7 +9,7 @@ class Video extends ParserAbstract implements ParserInterface
 {
 
     /**
-     * パースするビデオページのURL
+     * パースする動画ページのURL
      *
      * @author app2641
      **/
@@ -18,7 +18,7 @@ class Video extends ParserAbstract implements ParserInterface
 
 
     /**
-     * ビデオのタイトル
+     * 動画のタイトル
      *
      * @author app2641
      **/
@@ -34,13 +34,14 @@ class Video extends ParserAbstract implements ParserInterface
     protected $cast = false;
 
     
+
     public function execute ()
     {
         try {
             set_time_limit(0);
 
-            $conn = \Zend_Registry::get('db');
-            $conn->beginTransaction();
+            $db = \Zend_Registry::get('db');
+            $db->beginTransaction();
 
             $this->html = file_get_html($this->url);
             $this->cast = $this->parseCast();
@@ -49,10 +50,10 @@ class Video extends ParserAbstract implements ParserInterface
                 $this->parseVideo();
             }
 
-            $conn->commit();
+            $db->commit();
         
         } catch (\Exception $e) {
-            $conn->rollBack();
+            $db->rollBack();
             throw $e;
         }
     }

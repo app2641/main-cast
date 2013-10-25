@@ -69,7 +69,8 @@ class Feed extends ParserAbstract implements ParserInterface
         // videoのタイトルを取得
         $title = $item->getElementsByTagName('title')->item(0)->nodeValue;
 
-        $video = new Video();
+        // 動画情報を取得する
+        $moview = new Video();
         $video->setUrl($link);
         $video->setTitle($title);
         $video->execute();
