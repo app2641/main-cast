@@ -41,7 +41,7 @@ Ext.define('CAST.view.index.CastList', {
 
         me.store = Ext.create('Ext.data.Store', {
             autoLoad: true,
-            pageSize: 120,
+            pageSize: 300,
             fields: ['id', 'cast_id', 'dmm_name', 'name', 'furigana', 'search_index', 'is_active'],
             proxy: {
                 type: 'direct',

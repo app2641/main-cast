@@ -145,7 +145,12 @@ class Profile extends ParserAbstract implements ParserInterface
     public function parseCastImage ()
     {
         // 画像パスを取得
-        $img_src = $this->html->find('table tbody tr td img[width="125"]', 0)->getAttribute('src');
+        $img = $this->html->find('table tbody tr td img[width="125"]', 0);
+        if ($img == false) {
+            throw new \Exception('プロフィール画像の取得に失敗しました '.$this->cast_id);
+        }
+
+        $img_src = $img->getAttribute('src');
         $img_name = md5($this->name);
         $parent_dir = substr($img_name, 0, 1);
         $download_path = '/tmp/cast/'.$img_name.'.jpg';

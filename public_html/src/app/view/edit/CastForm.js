@@ -27,6 +27,7 @@ Ext.define('CAST.view.edit.CastForm', {
         me.buildDmmName();
         me.buildName();
         me.buildFurigana();
+        me.buildDMMButton();
 
         Ext.apply(me, {
             buttons: [{
@@ -99,7 +100,8 @@ Ext.define('CAST.view.edit.CastForm', {
 
         me.items.push({
             name: 'name',
-            fieldLabel: 'Name'
+            fieldLabel: 'Name',
+            selectOnFocus: true
         });
     },
 
@@ -115,7 +117,29 @@ Ext.define('CAST.view.edit.CastForm', {
 
         me.items.push({
             name: 'furigana',
-            fieldLabel: 'furigana'
+            fieldLabel: 'furigana',
+            selectOnFocus: true
+        });
+    },
+
+
+
+    /**
+     * DMMプロフィールページを開くボタンを構築する
+     *
+     * @author app2641
+     **/
+    buildDMMButton: function () {
+        var me = this;
+
+        me.items.push({
+            xtype: 'button',
+            text: 'DMM',
+            style: 'margin-top: 20px;',
+            width: 120,
+            handler: function () {
+                window.open('http://actress.dmm.co.jp/-/detail/=/actress_id='+me.cast_id+'/');
+            }
         });
     }
 

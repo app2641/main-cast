@@ -222,6 +222,30 @@ class CastQuery implements QueryInterface
 
 
     /**
+     * 指定頭文字のキャストを全取得する
+     *
+     * @param string $initial  頭文字
+     * @author app2641
+     **/
+    public function fetchAllByInitial ($initial)
+    {
+        try {
+            $sql = 'SELECT * FROM cast
+                WHERE cast.furigana LIKE ?';
+
+            $results = $this->db
+                ->state($sql, $initial.'%')->fetchAll();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $results;
+    }
+
+
+
+    /**
      * 検索インデックスを作成していないキャスト群を取得する
      *
      * @author app2641
