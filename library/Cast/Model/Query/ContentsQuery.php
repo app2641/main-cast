@@ -135,6 +135,29 @@ class ContentsQuery implements QueryInterface
 
 
     /**
+     * 指定URLのレコードを取得する
+     *
+     * @param string $url
+     * @return stdClass
+     **/
+    public function fetchByUrl ($url)
+    {
+        try {
+            $sql = 'SELECT * FROM contents
+                WHERE contents.url = ?';
+
+            $result = $this->db->state($sql, $url)->fetch();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $result;
+    }
+
+
+
+    /**
      * タイトルとキャストIDからコンテンツを取得する
      *
      * @param string $title  コンテンツタイトル

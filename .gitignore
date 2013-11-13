@@ -6,6 +6,11 @@ extras/documentation
 
 application/configs/database.ini
 application/configs/aws.ini
+
 public_html/resources/images/cast/*
+!public_html/resources/images/cast/.gitkeep
+public_html/resources/images/package/*
+!public_html/resources/images/package/.gitkeep
+
 resources/json/search/*
 
