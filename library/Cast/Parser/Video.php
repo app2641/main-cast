@@ -133,7 +133,13 @@ class Video extends ParserAbstract implements ParserInterface
         // タイトルの取得
         $this->title = $this->html->find('div.page-detail div.hreview h1#title', 0)->plaintext;
 
-        $img_src = $this->html->find('div#sample-video a', 0)->getAttribute('href');
+        $img_el = $this->html->find('div#sample-video a', 0);
+        if (is_null($img_el)) {
+            echo $this->url.PHP_EOL;
+            throw new \Exception('パッケージ画像を取得できません！');
+        }
+
+        $img_src = $img_el->getAttribute('href');
         $img_name = md5($this->title);
         $parent_dir = substr($img_name, 0, 1);
         $download_path = '/tmp/cast/'.$img_name.'.jpg';
