@@ -33,7 +33,7 @@ class ImportMovies extends Base\AbstractCommand
                 throw new \Exception('頭文字を指定してください');
             }
 
-            $this->container = $container  = new Container(new ModelFactory);
+            $this->container = $container = new Container(new ModelFactory);
             $cast_model = $container->get('CastModel');
 
             // 指定頭文字のキャストを取得する

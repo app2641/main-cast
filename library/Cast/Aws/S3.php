@@ -29,14 +29,15 @@ class S3 extends \AmazonS3
     /**
      * キャスト画像をS3へ保存する
      *
+     * @param string $type  アップロード先 (cast|package)
      * @param string $img  キャスト画像のファイル名
      * @author app2641
      **/
-    public function uploadCastImage ($img)
+    public function uploadImage ($type, $img)
     {
         try {
-            $path = ROOT_PATH.'/public_html/resources/image/cast/'.$img;
             $parent = substr($img, 0, 1);
+            $path = ROOT_PATH.'/public_html/resources/images/'.$type.'/'.$parent.'/'.$img;
 
             if (! file_exists($path)) {
                 throw new \Exception($path.' ファイルが見つかりません');
@@ -45,26 +46,18 @@ class S3 extends \AmazonS3
 
             $response = $this->create_object(
                 $this::BUCKET,
-                'resources/images/cast/'.$parent.'/'.$img,
+                'resources/images/'.$type.'/'.$parent.'/'.$img,
                 array(
                     'fileUpload' => $path
                 )
             );
 
             if (! $response->isOK()) {
-                throw new \Exception('キャスト画像のS3アップロードに失敗しました');
+                throw new \Exception($type.'画像のS3アップロードに失敗しました');
+            } else {
+                echo $img.' uploaded!'.PHP_EOL;
             }
 
-
-            // アップロードしたファイルを親フォルダ管理下に移動させる
-            $parent_dir = ROOT_PATH.'/public_html/resources/image/cast/'.$parent;
-            if (! is_dir($parent_dir)) {
-                mkdir($parent_dir);
-            }
-
-            $new_path = $parent_dir.'/'.$img;
-            rename($path, $new_path);
-        
         } catch (\Exception $e) {
             throw $e;
         }

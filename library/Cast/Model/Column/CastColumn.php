@@ -13,6 +13,7 @@ class CastColumn implements ColumnInterface
             'name',
             'furigana',
             'search_index',
+            'contents_index',
             'is_active'
         );
 

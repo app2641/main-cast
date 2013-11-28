@@ -76,6 +76,7 @@ class CastQuery implements QueryInterface
                 name = :name,
                 furigana = :furigana,
                 search_index = :search_index,
+                contents_index = :contents_index,
                 is_active = :is_active
                 WHERE cast.id = :id';
 
@@ -265,7 +266,6 @@ class CastQuery implements QueryInterface
 
         return $results;
     }
-
 
 
 

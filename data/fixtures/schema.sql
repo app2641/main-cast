@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.10, for osx10.7 (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.27, for osx10.8 (i386)
 --
 -- Host: localhost    Database: maincast
 -- ------------------------------------------------------
--- Server version	5.6.10
+-- Server version	5.5.27
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,6 +29,7 @@ CREATE TABLE `cast` (
   `name` varchar(100) DEFAULT NULL,
   `furigana` varchar(100) DEFAULT NULL,
   `search_index` tinyint(1) DEFAULT '0',
+  `contents_index` tinyint(1) DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_2` (`name`),
@@ -36,7 +37,8 @@ CREATE TABLE `cast` (
   KEY `is_active` (`is_active`),
   KEY `search_index` (`search_index`),
   KEY `cast_id` (`cast_id`),
-  KEY `dmm_name` (`dmm_name`)
+  KEY `dmm_name` (`dmm_name`),
+  KEY `contents_index` (`contents_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -74,4 +76,4 @@ CREATE TABLE `contents` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-10-23 17:40:03
+-- Dump completed on 2013-11-24 14:58:55
