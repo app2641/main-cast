@@ -24,17 +24,29 @@ class Upload extends Base\AbstractCommand
 
 
             $type = $params[0];
-            $cast_path = ROOT_PATH.'/public_html/resources/images/'.$type;
+            $cast_path     = ROOT_PATH.'/public_html/resources/images/'.$type;
+            $uploaded_path = ROOT_PATH.'/public_html/resources/images/uploaded/'.$type;
             $dir = explode(',', '0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f');
             $S3 = new S3();
 
 
             // 親ディレクトリを反復取得
             foreach ($dir as $dir) {
+                if (! is_dir($uploaded_path.'/'.$dir)) {
+                    mkdir($uploaded_path.'/'.$dir);
+                    chmod($uploaded_path.'/'.$dir, 0777);
+                }
+
                 if ($dh = opendir($cast_path.'/'.$dir)) {
                     while ($img = readdir($dh)) {
                         if (preg_match('/\.jpg/', $img)) {
                             $S3->uploadImage($type, $img);
+
+                            // アップロードした画像を移動させる
+                            rename(
+                                $cast_path.'/'.$dir.'/'.$img,
+                                $uploaded_path.'/'.$dir.'/'.$img
+                            );
                         }
                     }
                     closedir($dh);
