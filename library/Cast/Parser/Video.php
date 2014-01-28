@@ -80,7 +80,7 @@ class Video extends ParserAbstract implements ParserInterface
         
         } catch (\Exception $e) {
             $db->rollBack();
-            echo $e->getMessage().PHP_EOL;
+            throw $e;
         }
     }
 
