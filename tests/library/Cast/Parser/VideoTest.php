@@ -77,12 +77,12 @@ class VideoTest extends DatabaseTestCase
             $video->parsePage();
 
             $result = $video->parseCast();
-            $this->assertTrue(is_array($result));
+            $this->assertTrue($result);
         
             $db->rollBack();
         
         } catch (\Exception $e) {
-            $conn->rollBack();
+            $db->rollBack();
             throw $e;
         }
     }

@@ -36,15 +36,6 @@ class Video extends ParserAbstract implements ParserInterface
 
 
     /**
-     * キャスト情報を格納したArray
-     *
-     * @author app2641
-     **/
-    protected $casts = array();
-
-
-
-    /**
      * 解析するURLをセットする
      *
      * @param string $url  解析する動画ページのURL
@@ -86,9 +77,11 @@ class Video extends ParserAbstract implements ParserInterface
             $this->parsePage();
 
             // キャスト情報を取得する
-            $this->casts = $this->parseCast();
-            $this->parseVideoImage();
-            $this->parseVideo();
+            $result = $this->parseCast();
+            if ($result) {
+                $this->parseVideoImage();
+                $this->parseVideo();
+            }
 
             $db->commit();
         
@@ -129,7 +122,7 @@ class Video extends ParserAbstract implements ParserInterface
     /**
      * Videoページからキャスト情報を解析する
      *
-     * @return array
+     * @return boolean
      **/
     public function parseCast ()
     {
@@ -154,10 +147,10 @@ class Video extends ParserAbstract implements ParserInterface
             // 未登録のキャストの場合
             $profile = new Profile();
             $profile->setCastId($this->cast_id);
-            $casts[] = array($profile->execute());
+            $profile->execute();
         }
 
-        return $casts;
+        return true;
     }
 
 
@@ -237,16 +230,6 @@ class Video extends ParserAbstract implements ParserInterface
             // リモートの場合
             $S3 = new S3();
 
-            $response = $S3->get_object(
-                $S3::BUCKET,
-                'resources/images/package/'.$parent_dir.'/'.$img_name.'.jpg'
-            );
-
-            if ($response->status == 404) {
-                // todo
-            }
-
-
             $response = $S3->create_object(
                 $S3::BUCKET,
                 'resources/images/package/'.$parent_dir.'/'.$img_name.'.jpg',
@@ -321,7 +304,6 @@ class Video extends ParserAbstract implements ParserInterface
 
         $data[] = array(
             'title' => $this->title,
-            'cast' => $this->cast->name,
             'url' => $this->url
         );
         \Zend_Registry::set('video', $data);

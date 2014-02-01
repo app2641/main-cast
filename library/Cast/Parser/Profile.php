@@ -222,16 +222,6 @@ class Profile extends ParserAbstract implements ParserInterface
                 // リモートの場合
                 $S3 = new S3();
 
-                $response = $S3->get_object(
-                    $S3::BUCKET,
-                    'resources/images/cast/'.$parent_dir.'/'.$img_name.'.jpg'
-                );
-
-                if ($response->status == 404) {
-                    // todo
-                }
-
-
                 $response = $S3->create_object(
                     $S3::BUCKET,
                     'resources/images/cast/'.$parent_dir.'/'.$img_name.'.jpg',
@@ -284,9 +274,8 @@ class Profile extends ParserAbstract implements ParserInterface
             }
 
             $data[] = array(
-                'cast_id' => $cast_model->get('cast_id'),
-                'dmm_name' => $cast_model->get('dmm_name'),
-                'name' => $cast_model->get('name')
+                'name' => $cast_model->get('name'),
+                'dmm_name' => $cast_model->get('dmm_name')
             );
             \Zend_Registry::set('cast', $data);
         }
