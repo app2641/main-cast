@@ -36,15 +36,6 @@ class Video extends ParserAbstract implements ParserInterface
 
 
     /**
-     * キャスト情報を格納したArray
-     *
-     * @author app2641
-     **/
-    protected $casts = array();
-
-
-
-    /**
      * 解析するURLをセットする
      *
      * @param string $url  解析する動画ページのURL
@@ -55,8 +46,26 @@ class Video extends ParserAbstract implements ParserInterface
         $this->url = $url;
     }
 
+
+
+    /**
+     * ビデオタイトルを設定する
+     *
+     * @param string $title  ビデオタイトル
+     * @author app2641
+     **/
+    public function setTitle ($title)
+    {
+        $this->title = $title;
+    }
+
     
 
+    /**
+     * 解析処理
+     *
+     * @return boolean
+     **/
     public function execute ()
     {
         try {
@@ -65,23 +74,47 @@ class Video extends ParserAbstract implements ParserInterface
             $db = \Zend_Registry::get('db');
             $db->beginTransaction();
 
-            $this->html = file_get_html($this->url);
-            if ($this->html === false) {
-                echo $this->url.PHP_EOL;
-                throw new \Exception('動画ページを取得出来ませんでした');
-            }
+            $this->parsePage();
 
             // キャスト情報を取得する
-            $this->casts = $this->_parseCast();
-            $this->_parseVideoImage();
-            $this->_parseVideo();
+            $result = $this->parseCast();
+            if ($result) {
+                $this->parseVideoImage();
+                $this->parseVideo();
+            }
 
             $db->commit();
         
         } catch (\Exception $e) {
             $db->rollBack();
-            echo $e->getMessage().PHP_EOL;
+            throw $e;
         }
+
+        return true;
+    }
+
+
+
+    /**
+     * ページ解析処理
+     *
+     * @return boolean
+     **/
+    public function parsePage ()
+    {
+        try {
+
+            $this->html = file_get_html($this->url);
+            if ($this->html === false) {
+                echo $this->url.PHP_EOL;
+                throw new \Exception('動画ページを取得出来ませんでした');
+            }
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return true;
     }
 
 
@@ -89,9 +122,9 @@ class Video extends ParserAbstract implements ParserInterface
     /**
      * Videoページからキャスト情報を解析する
      *
-     * @author app2641
+     * @return boolean
      **/
-    private function _parseCast ()
+    public function parseCast ()
     {
         $cast_tag = $this->html->find('div.page-detail table tbody tr td table tbody tr td span#performer a');
 
@@ -114,10 +147,30 @@ class Video extends ParserAbstract implements ParserInterface
             // 未登録のキャストの場合
             $profile = new Profile();
             $profile->setCastId($this->cast_id);
-            $casts[] = array($profile->execute());
+            $profile->execute();
         }
 
-        return $casts;
+        return true;
+    }
+
+
+
+    /**
+     * 動画タイトルを取得する
+     *
+     * @return String
+     **/
+    public function parseTitle ()
+    {
+        try {
+            $title = $this->html->find('div.page-detail div.hreview h1#title', 0)->plaintext;
+            $this->title = $title;
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $title;
     }
 
 
@@ -125,13 +178,15 @@ class Video extends ParserAbstract implements ParserInterface
     /**
      * 動画のパッケージ画像を取得する
      *
-     * @param 
-     * @return void
+     * @return boolean
      **/
-    private function _parseVideoImage ()
+    public function parseVideoImage ()
     {
         // タイトルの取得
-        $this->title = $this->html->find('div.page-detail div.hreview h1#title', 0)->plaintext;
+        if (is_null($this->title)) {
+            $this->parseTitle();
+        }
+
 
         $img_el = $this->html->find('div#sample-video a', 0);
         if (is_null($img_el)) {
@@ -175,16 +230,6 @@ class Video extends ParserAbstract implements ParserInterface
             // リモートの場合
             $S3 = new S3();
 
-            $response = $S3->get_object(
-                $S3::BUCKET,
-                'resources/images/package/'.$parent_dir.'/'.$img_name.'.jpg'
-            );
-
-            if ($response->status == 404) {
-                // todo
-            }
-
-
             $response = $S3->create_object(
                 $S3::BUCKET,
                 'resources/images/package/'.$parent_dir.'/'.$img_name.'.jpg',
@@ -198,6 +243,8 @@ class Video extends ParserAbstract implements ParserInterface
                 echo 'パッケージ画像の保存に失敗しました！'.PHP_EOL;
             }
         }
+
+        return true;
     }
 
 
@@ -205,31 +252,31 @@ class Video extends ParserAbstract implements ParserInterface
     /**
      * Video情報を解析する
      *
-     * @author app2641
+     * @return boolean
      **/
-    private function _parseVideo ()
+    public function parseVideo ()
     {
         // descriptionの取得
         $description = trim($this->html->find('div.page-detail table tbody td div.lh4', 0)->plaintext);
 
         // 対応devideの取得
-        $device = $this->html->find('div.page-detail table tbody tr td table tbody tr td', 1)->plaintext;
+        $device = trim($this->html->find('div.page-detail table tbody tr td table tbody tr td', 1)->plaintext);
 
         // 発売日
         $date_tag = $this->html->find('div.page-detail table tbody tr td table tbody tr', 2);
-        $date = $date_tag->find('td', 1)->plaintext;
+        $date = trim($date_tag->find('td', 1)->plaintext);
 
         // 収録時間
         $duration_tag = $this->html->find('div.page-detail table tbody tr td table tbody tr', 3);
-        $duration = $duration_tag->find('td', 1)->plaintext;
+        $duration = trim($duration_tag->find('td', 1)->plaintext);
 
         // メーカー
         $maker_tag = $this->html->find('div.page-detail table tbody tr td table tbody tr', 7);
-        $maker = $maker_tag->find('td', 1)->plaintext;
+        $maker = trim($maker_tag->find('td', 1)->plaintext);
 
         // レーベル
         $label_tag = $this->html->find('div.page-detail table tbody tr td table tbody tr', 8);
-        $label = $label_tag->find('td', 1)->plaintext;
+        $label = trim($label_tag->find('td', 1)->plaintext);
 
 
         $params = new \stdClass;
@@ -249,31 +296,17 @@ class Video extends ParserAbstract implements ParserInterface
 
 
         // 新着情報を保管する
-        //if (! \Zend_Registry::isRegistered('video')) {
-            //$data = array();
-             //\Zend_Registry::set('video', $data);
-        //} else {
-            //$data = \Zend_Registry::get('video');
-        //}
+        if (! \Zend_Registry::isRegistered('video')) {
+            $data = array();
+        } else {
+            $data = \Zend_Registry::get('video');
+        }
 
-        //$data[] = array(
-            //'title' => $this->title,
-            //'cast' => $this->cast->name,
-            //'url' => $this->url
-        //);
-        //\Zend_Registry::set('video', $data);
+        $data[] = array(
+            'title' => $this->title,
+            'url' => $this->url
+        );
+        \Zend_Registry::set('video', $data);
     }
-
-
-
-    /**
-     * ビデオタイトルを設定する
-     *
-     * @param string $title  ビデオタイトル
-     * @author app2641
-     **/
-    public function setTitle ($title)
-    {
-        $this->title = $title;
-    }
+    
 }

@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!-- render TestRecord -->
+    <cast
+        id="1"
+        cast_id="1022215"
+        dmm_name="愛沢かりん（あいざわかりん）"
+        name="愛沢かりん"
+        furigana="あいざわかりん"
+        search_index="0"
+        contents_index="0"
+        is_active="1"
+    />
+
+    
+    
+    
+    <contents
+        id="1"
+        cast_id="1022215"
+        title="新人 愛沢かりん"
+        description="##null##"
+        device="パソコン、iPhone/iPad、Android、テレビ"
+        duration="120分 （HD版：120分）"
+        sale_date=" 2013/10/11"
+        maker="マキシング"
+        label="MAXING"
+        package="bd7fce2de5c3e798b703f2e690c8dbcf"
+        url="http://www.dmm.co.jp/digital/videoa/-/detail/=/cid=h_068mxbd00153"
+    />
 
 </dataset>

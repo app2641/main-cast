@@ -4,6 +4,9 @@
 namespace Cast\Commands;
 
 use Cast\Parser\Feed;
+use Cast\Aws\SES;
+
+use Cast\Utility\SuperException;
 
 class Crawl extends Base\AbstractCommand
 {
@@ -33,31 +36,50 @@ class Crawl extends Base\AbstractCommand
 
                 foreach ($data as $val) {
                     $info .= 'title: '.$val['title'].PHP_EOL.
-                        'cast: '.$val['cast'].PHP_EOL.
                         'url: '.$val['url'].PHP_EOL.PHP_EOL;
                 }
             }
+
 
             // キャスト情報
             if (\Zend_Registry::isRegistered('cast')) {
                 $data = \Zend_Registry::get('cast');
-                $info .= 'Casts'.PHP_EOL;
+                $info .= PHP_EOL.'Casts'.PHP_EOL;
 
                 foreach ($data as $val) {
                     $info .= 'name: '.$val['name'].PHP_EOL.
-                        'furigana: '.$val['furigana'].PHP_EOL.
-                        'url: '.$val['url'].PHP_EOL.PHP_EOL;
+                        'dmm_name: '.$val['dmm_name'].PHP_EOL;
                 }
             }
 
-            echo $info.PHP_EOL;
 
+            // 更新情報をメールで送信する
+            if ($info != '') {
+                $this->sendInformationMail($info);
+            }
 
             $this->log('finished parse!', 'message');
         
         } catch (\Exception $e) {
+            SuperException::mail($e);
             $this->errorLog($e->getMessage());
         }
+    }
+
+
+
+    /**
+     * 解析した情報をメールで送信する
+     *
+     * @param String $info
+     * @return void
+     **/
+    public function sendInformationMail ($info)
+    {
+        $body = date('Y-m-d H:i:s').' 新着情報'.PHP_EOL.PHP_EOL.$info;
+
+        $SES  = new SES();
+        $SES->mail($body);
     }
 
 

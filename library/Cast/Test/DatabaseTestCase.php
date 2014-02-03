@@ -63,34 +63,4 @@ class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
 
         return $rds;
     }
-
-
-
-    /**
-     * @return void
-     * 初期化処理を記載する
-     */
-    public function setUp ()
-    {
-        parent::setUp();
-
-
-        $this->application = new \Zend_Application(
-            APPLICATION_ENV,
-            APPLICATION_PATH . '/configs/core.ini'
-        );
-
-        $this->application->bootstrap();
-
-
-        $this->container = new Container(new ModelFactory);
-        $user_table = $this->container->get('UserTable');
-        $user_id = 1;
-        $user = $user_table->fetchById($user_id);
-
-        // authの登録
-        $auth = new Authentication();
-        $auth->setStorage($user);
-        \Zend_Registry::set('auth', $auth);
-    }
 }

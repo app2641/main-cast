@@ -62,6 +62,26 @@ class Profile extends ParserAbstract implements ParserInterface
 
 
 
+    /**
+     * キャストIDをセットする
+     *
+     * @param int $cast_id  キャストID
+     * @author app2641
+     **/
+    public function setCastId ($cast_id)
+    {
+        $this->cast_id = $cast_id;
+        $this->url = sprintf($this->url, $cast_id);
+    }
+
+
+
+    /**
+     * 解析処理
+     *
+     * @return void
+     * @return CastModel
+     **/
     public function execute ()
     {
         try {
@@ -69,11 +89,7 @@ class Profile extends ParserAbstract implements ParserInterface
             $db = \Zend_Registry::get('db');
             $db->beginTransaction();
         
-            $this->html = file_get_html($this->url);
-            if ($this->html == false) {
-                throw new \Exception('プロフィールページの取得に失敗しました');
-            }
-
+            $this->parsePage();
             $this->parseName();
             $this->parseFurigana();
             $this->parseCastImage();
@@ -92,15 +108,28 @@ class Profile extends ParserAbstract implements ParserInterface
 
 
     /**
-     * キャストIDをセットする
+     * ページの取得
      *
-     * @param int $cast_id  キャストID
-     * @author app2641
+     * @return boolean
      **/
-    public function setCastId ($cast_id)
+    public function parsePage ()
     {
-        $this->cast_id = $cast_id;
-        $this->url = sprintf($this->url, $cast_id);
+        try {
+            if (is_null($this->cast_id)) {
+                throw new \Exception('DMM用のキャストIDが指定されていません！');
+            }
+
+            $this->html = file_get_html($this->url);
+
+            if ($this->html == false) {
+                throw new \Exception('プロフィールページの取得に失敗しました！');
+            }    
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return true;
     }
 
 
@@ -109,17 +138,19 @@ class Profile extends ParserAbstract implements ParserInterface
     /**
      * キャスト名を解析して取得する
      *
-     * @author app2641
+     * @return String
      **/
     public function parseName ()
     {
         try {
-            $this->raw_name = $this->_encode($this->html->find('table tbody tr td h1', 0)->plaintext);
+            $this->raw_name = trim($this->_encode($this->html->find('table tbody tr td h1', 0)->plaintext));
             $this->name = preg_replace('/（.*$/', '', $this->raw_name);
         
         } catch (\Exception $e) {
             throw $e;
         }
+
+        return $this->name;
     }
 
 
@@ -127,12 +158,14 @@ class Profile extends ParserAbstract implements ParserInterface
     /**
      * キャスト名のふりがなを解析して取得する
      *
-     * @author app2641
+     * @return String
      **/
     public function parseFurigana ()
     {
         preg_match('/（(.*)）/', $this->raw_name, $matches);
         $this->furigana = $matches[1];
+
+        return $this->furigana;
     }
 
 
@@ -140,77 +173,74 @@ class Profile extends ParserAbstract implements ParserInterface
     /**
      * プロフィール画像を取得して保存する
      *
-     * @author app2641
+     * @return boolean
      **/
     public function parseCastImage ()
     {
-        // 画像パスを取得
-        $img = $this->html->find('table tbody tr td img[width="125"]', 0);
-        if ($img == false) {
-            throw new \Exception('プロフィール画像の取得に失敗しました '.$this->cast_id);
+        try {
+            // 画像パスを取得
+            $img = $this->html->find('table tbody tr td img[width="125"]', 0);
+            if ($img == false) {
+                throw new \Exception('プロフィール画像の取得に失敗しました '.$this->cast_id);
+            }
+
+            $img_src = $img->getAttribute('src');
+            $img_name = md5($this->name);
+            $parent_dir = substr($img_name, 0, 1);
+            $download_path = '/tmp/cast/'.$img_name.'.jpg';
+
+            if (! is_dir('/tmp/cast')) {
+                mkdir('/tmp/cast');
+                chmod('/tmp/cast', 0777);
+            }
+
+
+            // 画像をダウンロード 
+            $command = sprintf('curl %s -o %s', $img_src, $download_path);
+            exec($command);
+
+
+
+            // ローカル環境かどうかで画像の保存場所を変える
+            if (IS_LOCAL) {
+                // ローカルの場合
+                $parent_path = ROOT_PATH.'/public_html/resources/images/cast/'.$parent_dir;
+                $img_path = $parent_path.'/'.$img_name.'.jpg';
+
+                // 親ディレクトリの確認
+                if (! is_dir($parent_path)) {
+                    mkdir($parent_path);
+                    chmod($parent_path, 0777);
+                }
+
+                // 既にファイルがあるかどうかを確認
+                if (! file_exists($img_path)) {
+                    copy($download_path, $img_path);
+                }
+
+            } else {
+                // リモートの場合
+                $S3 = new S3();
+
+                $response = $S3->create_object(
+                    $S3::BUCKET,
+                    'resources/images/cast/'.$parent_dir.'/'.$img_name.'.jpg',
+                    array(
+                        'fileUpload' => $download_path
+                    )
+                );
+
+
+                if (! $response->isOK()) {
+                    echo 'プロフィール画像の保存に失敗しました！'.PHP_EOL;
+                }
+            }
+
+        } catch (\Exception $e) {
+            throw $e;
         }
 
-        $img_src = $img->getAttribute('src');
-        $img_name = md5($this->name);
-        $parent_dir = substr($img_name, 0, 1);
-        $download_path = '/tmp/cast/'.$img_name.'.jpg';
-
-        if (! is_dir('/tmp/cast')) {
-            mkdir('/tmp/cast');
-            chmod('/tmp/cast', 0777);
-        }
-
-
-        // 画像をダウンロード 
-        $command = sprintf('curl %s -o %s', $img_src, $download_path);
-        exec($command);
-
-
-
-        // ローカル環境かどうかで画像の保存場所を変える
-        if (IS_LOCAL) {
-            // ローカルの場合
-            $parent_path = ROOT_PATH.'/public_html/resources/images/cast/'.$parent_dir;
-            $img_path = $parent_path.'/'.$img_name.'.jpg';
-
-            // 親ディレクトリの確認
-            if (! is_dir($parent_path)) {
-                mkdir($parent_path);
-                chmod($parent_path, 0777);
-            }
-
-            // 既にファイルがあるかどうかを確認
-            if (! file_exists($img_path)) {
-                copy($download_path, $img_path);
-            }
-        
-        } else {
-            // リモートの場合
-            $S3 = new S3();
-
-            $response = $S3->get_object(
-                $S3::BUCKET,
-                'resources/images/cast/'.$parent_dir.'/'.$img_name.'.jpg'
-            );
-
-            if ($response->status == 404) {
-                // todo
-            }
-
-
-            $response = $S3->create_object(
-                $S3::BUCKET,
-                'resources/images/cast/'.$parent_dir.'/'.$img_name.'.jpg',
-                array(
-                    'fileUpload' => $download_path
-                )
-            );
-
-
-            if (! $response->isOK()) {
-                echo 'プロフィール画像の保存に失敗しました！'.PHP_EOL;
-            }
-        }
+        return true;
     }
 
 
@@ -218,7 +248,7 @@ class Profile extends ParserAbstract implements ParserInterface
     /**
      * キャストデータをDBインサートする
      *
-     * @author app2641
+     * @return boolean
      **/
     public function insertCast ()
     {
@@ -234,7 +264,23 @@ class Profile extends ParserAbstract implements ParserInterface
             $cast_model->insert($params);
 
             $this->cast = $cast_model->getRecord();
+
+
+            // 新着情報を保管する
+            if (! \Zend_Registry::isRegistered('cast')) {
+                $data = array();
+            } else {
+                $data = \Zend_Registry::get('cast');
+            }
+
+            $data[] = array(
+                'name' => $cast_model->get('name'),
+                'dmm_name' => $cast_model->get('dmm_name')
+            );
+            \Zend_Registry::set('cast', $data);
         }
+
+        return true;
     }
 
 
