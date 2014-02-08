@@ -2,4 +2,29 @@
 <dataset>
     <!-- render TestRecord -->
 
+    <cast
+        id="1"
+        cast_id="26375"
+        dmm_name="みづなれい（みずなれい）（みづなれい（みずなれい））"
+        name="みづなれい"
+        furigana="みづなれい"
+        search_index="0"
+        is_active="1"
+    />
+
+
+    <contents
+        id="1"
+        cast_id="26375"
+        title="トキメキ みづなれい"
+        description="##null##"
+        device="パソコン、iPhone/iPad、Android、テレビ"
+        duration="118分 （HD版：118分）"
+        sale_date="2008/08/22"
+        maker="アリスJAPAN"
+        label="アリスJAPAN"
+        package="4852d35cd58a7151cade835c46947c63"
+        url="http://www.dmm.co.jp/digital/videoa/-/detail/=/cid=53dv941"
+    />
+
 </dataset>

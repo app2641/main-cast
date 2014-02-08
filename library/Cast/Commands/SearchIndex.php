@@ -52,7 +52,7 @@ class SearchIndex extends Base\AbstractCommand
 
                         if ($isAWS) {
                             // 既にresult.jsonがS3にあるかどうかを確認する
-                            $response = $S3->getSearchIndex($value);
+                            $response = $S3->getSearchIndex($value, $path['json']);
 
                             if ($response->status == 200) {
                                 $json = json_decode($response->body);
