@@ -22,9 +22,9 @@ class CastModel extends AbstractModel
     /**
      * キャスト名とふりがなを解析して検索インデックス用の配列にする
      *
-     * @author app2641
+     * @return Array
      **/
-    public function decompositionValue ()
+    public function decompositionName ()
     {
         mb_internal_encoding('UTF-8');
         $data  = array();

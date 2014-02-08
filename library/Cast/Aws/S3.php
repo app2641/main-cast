@@ -68,14 +68,12 @@ class S3 extends \AmazonS3
     /**
      * 指定文字列の検索インデックスを取得する
      *
-     * @param string $string  検索クエリ文字列
+     * @param string $path  保存先パス
      * @author app2641
      **/
-    public function getSearchIndex ($string)
+    public function getSearchIndex ($path)
     {
         mb_internal_encoding('UTF-8');
-
-        $path = 'resources/json/search/'.mb_strlen($string).'/'.$string.'/result.json';
 
         $response = $this->get_object(
             $this::BUCKET,
@@ -90,16 +88,13 @@ class S3 extends \AmazonS3
     /**
      * 指定文字列の検索インデックスをS3に保存する
      *
-     * @param string $string  検索クエリ文字列
-     * @param array $json  検索インデックスの配列
+     * @param array $json  検索インデックスJson
+     * @param string $path  保存先パス
      * @author app2641
      **/
-    public function uploadSearchIndex ($string, $json)
+    public function uploadSearchIndex ($json, $path)
     {
         mb_internal_encoding('UTF-8');
-
-        $json = json_encode($json);
-        $path = 'resources/json/search/'.mb_strlen($string).'/'.$string.'/result.json';
 
         $response = $this->create_object(
             $this::BUCKET,
