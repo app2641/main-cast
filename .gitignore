@@ -19,4 +19,5 @@ public_html/resources/images/uploaded/package/*
 !public_html/resources/images/uploaded/package/.gitkeep
 
 public_html/resources/json/search/*
+!public_html/resources/json/search/.gitkeep
 
