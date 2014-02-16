@@ -59,6 +59,9 @@ class SearchIndex
     public function generate (CastModel $model)
     {
         try {
+            $db = \Zend_Registry::get('db');
+            $db->beginTransaction();
+
             mb_internal_encoding('UTF-8');
 
             $this->model = $model;
@@ -141,8 +144,11 @@ class SearchIndex
                     unset($fp);
                 }
             }
+
+            $db->commit();
         
         } catch (\Exception $e) {
+            $db->rollBack();
             throw $e;
         }
     }

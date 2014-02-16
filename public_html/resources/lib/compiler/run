@@ -1,0 +1,27 @@
+#! /usr/bin/env php
+<?php
+
+try {
+    $base  = dirname(__FILE__);
+    $root  = realpath($base.'/../../../');
+    $files = $base.'/files.ini';
+
+    $ini = parse_ini_file($files);
+
+    $src = '';
+    foreach ($ini['src'] as $js) {
+        $src .= '--js '.$root.'/'.$ini['path'].'/'.$js.' ';
+    }
+
+
+    $command = sprintf(
+        'java -jar %s %s --js_output_file %s',
+        $base.'/compiler.jar',
+        $src,
+        $root.'/'.$ini['dest']
+    );
+    passthru($command);
+
+} catch (\Exception $e) {
+    throw $e;
+}

@@ -180,4 +180,28 @@ class ContentsQuery implements QueryInterface
 
         return $result;
     }
+
+
+
+    /**
+     * 指定DMMIDから該当コンテンツを全取得する
+     *
+     * @param int $cast_id キャストのDMMID
+     * @return array
+     **/
+    public function fetchAllByCastId ($cast_id)
+    {
+        try {
+            $sql = 'SELECT * FROM contents
+                WHERE contents.cast_id = ?
+                ORDER BY contents.sale_date ASC';
+
+            $results = $this->db->state($sql, $cast_id)->fetchAll();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $results;
+    }
 }

@@ -1,0 +1,44 @@
+DOCTYPE html
+html lang="ja"
+    head
+        meta charset="utf-8"
+        title MainCast! -- <?php echo $this->cast->get('name') ?> 主演情報
+
+        meta name="twitter:site" content="@app2641"
+        meta name="keywords" content="AV女優 主演 情報 動画 DMM"
+
+        link rel="author" href="https://plus.google.com/107799956847403953714"
+        meta name="description" content="AV女優 <?php echo $this->cast->get('name') ?>の単独主演動画をDMMから検索するサイトです。"
+
+
+        link href="/resources/images/favicon.ico" rel="shortcut icon"
+
+        link rel="stylesheet" href="/resources/lib/twitter-bootstrap/css/bootstrap.min.css"
+        link rel="stylesheet" href="/resources/lib/twitter-bootstrap/css/bootstrap-theme.min.css"
+        link rel="stylesheet" href="/resources/css/template.css"
+
+        script type="text/javascript" src="/resources/lib/jQuery/jquery-1.10.2.min.js"
+        script type="text/javascript" src="/resources/lib/twitter-bootstrap/js/bootstrap.min.js"
+        script type="text/javascript" src="/resources/lib/jquery-hashchange/jquery.ba-hashchange.js"
+        script type="text/javascript" src="/resources/js/analytics.js"
+        script type="text/javascript" src="/resources/js/cast/cast.js"
+
+    body
+        div#main-container
+            div#maincast-cast-data-container
+
+                div.row
+                    div.col-lg-2
+                        img#cast-image src="<?php echo $this->image ?>"
+
+                        h2#cast-name <?php echo $this->cast->get('name') ?>
+                        p#cast-furigana <?php echo $this->cast->get('furigana') ?>
+
+                        <?php foreach ($this->contents as $content): ?>
+                        p <?php echo $content->title ?>
+                        <?php endforeach; ?>
+
+                    div.col-lg-6
+                        p test
+
+

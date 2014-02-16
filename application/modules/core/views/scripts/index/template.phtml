@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      MainCast! -- <?php echo $this->cast->get('name') ?> 主演情報
+    </title>
+    <meta content="@app2641" name="twitter:site" />
+    <meta content="AV女優 主演 情報 動画 DMM" name="keywords" />
+    <link href="https://plus.google.com/107799956847403953714" rel="author" />
+    <meta content="AV女優 &lt;?php echo $this-&gt;cast-&gt;get('name') ?&gt;の単独主演動画をDMMから検索するサイトです。" name="description" />
+    <link href="/resources/images/favicon.ico" rel="shortcut icon" />
+    <link href="/resources/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/resources/lib/twitter-bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="/resources/css/template.css" rel="stylesheet" />
+    <script src="/resources/lib/jQuery/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="/resources/lib/twitter-bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/resources/lib/jquery-hashchange/jquery.ba-hashchange.js" type="text/javascript"></script>
+    <script src="/resources/js/analytics.js" type="text/javascript"></script>
+    <script src="/resources/js/cast/cast.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="main-container">
+      <div id="maincast-cast-data-container">
+        <div class="row">
+          <div class="col-lg-2">
+            <img id="cast-image" src="<?php echo $this->image ?>" />
+            <h2 id="cast-name">
+              <?php echo $this->cast->get('name') ?>
+            </h2>
+            <p id="cast-furigana">
+              <?php echo $this->cast->get('furigana') ?>
+            </p>
+            <?php foreach ($this->contents as $content): ?>
+            <p>
+              <?php echo $content->title ?>
+            </p>
+            <?php endforeach; ?>
+          </div>
+          <div class="col-lg-6">
+            <p>
+              test
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

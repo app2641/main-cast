@@ -249,16 +249,23 @@ class CastQuery implements QueryInterface
     /**
      * 検索インデックスを作成していないキャスト群を取得する
      *
+     * @param string $furigana  あいまい検索用ふりがな
      * @author app2641
      **/
-    public function notSearchIndexCasts ()
+    public function notSearchIndexCasts ($furigana = false)
     {
         try {
             $sql = 'SELECT * FROM cast
                 WHERE cast.search_index = ?';
+            $bind = array(false);
+
+            if ($furigana) {
+                $sql .= ' AND cast.furigana LIKE ?';
+                $bind[] = $furigana.'%';
+            }
 
             $results = $this->db
-                ->state($sql, false)->fetchAll();
+                ->state($sql, $bind)->fetchAll();
         
         } catch (\Exception $e) {
             throw $e;
@@ -333,5 +340,28 @@ class CastQuery implements QueryInterface
         }
 
         return $result->count;
+    }
+
+
+
+    /**
+     * 指定個数目のレコードを返す
+     *
+     * @param int $int  指定個数
+     * @return stdClass
+     **/
+    public function getOffsetRecord ($int)
+    {
+        try {
+            $sql = sprintf('SELECT * FROM cast
+                LIMIT %s, 1', $int);
+
+            $result = $this->db->state($sql)->fetch();
+        
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        return $result;
     }
 }

@@ -44,4 +44,20 @@ class CastModel extends AbstractModel
 
         return $data;
     }
+
+
+
+    /**
+     * ランダムでキャストを取得する
+     *
+     * @return void
+     **/
+    public function fetchRandomCast ()
+    {
+        $count = $this->query->getListCount();
+        $rand  = rand(1, $count);
+
+        $record = $this->query->getOffsetRecord($rand);
+        $this->setRecord($record);
+    }
 }

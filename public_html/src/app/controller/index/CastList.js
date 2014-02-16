@@ -35,6 +35,13 @@ Ext.define('CAST.controller.index.CastList', {
                 itemclick: function (view, record, item, index, e) {
                     window.open('/index/edit/cast_id/'+ record.raw.cast_id);
                 }
+            },
+
+
+            'index-CastList toolbar button[action="template"]': {
+                click: function () {
+                    window.open('/index/template');
+                }
             }
         });
     },

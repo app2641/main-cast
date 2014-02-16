@@ -109,6 +109,9 @@ Ext.define('CAST.view.index.CastList', {
             xtype: 'searchfield',
             store: me.store,
             width: 400
+        }, '-', {
+            text: 'テンプレート',
+            action: 'template'
         }];
 
 

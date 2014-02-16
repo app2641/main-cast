@@ -1,0 +1,22 @@
+
+dest: public_html/resources/js/app.js
+
+path: public_html/resources/js/app
+
+src:
+
+
+# store
+
+
+
+# controller
+    - Contollers.js
+
+
+
+# view
+    - view/SearchBox.js
+
+
+    - App.js
