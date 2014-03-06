@@ -48,7 +48,9 @@ class Crawl extends Base\AbstractCommand
 
                 foreach ($data as $val) {
                     $info .= 'name: '.$val['name'].PHP_EOL.
-                        'dmm_name: '.$val['dmm_name'].PHP_EOL;
+                        'dmm_name: '.$val['dmm_name'].PHP_EOL.
+                        'url: http://webapp.maincast.app2641.com/index/edit/cast_id/'.
+                        $val['cast_id'].PHP_EOL.PHP_EOL;
                 }
             }
 

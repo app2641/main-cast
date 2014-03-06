@@ -28,17 +28,28 @@ html lang="ja"
             div#maincast-cast-data-container
 
                 div.row
-                    div.col-lg-2
-                        img#cast-image src="<?php echo $this->image ?>"
+                    div.col-lg-3
+                        a target="_blank" href="http://actress.dmm.co.jp/-/detail/=/actress_id=<?php echo $this->cast->get('cast_id' ) ?>"
+                            img#cast-image src="<?php echo $this->image ?>"
 
-                        h2#cast-name <?php echo $this->cast->get('name') ?>
+                        h2#cast-name
+                            a target="_blank" href="http://actress.dmm.co.jp/-/detail/=/actress_id=<?php echo $this->cast->get('cast_id' ) ?>"
+                                | <?php echo $this->cast->get('name') ?>
                         p#cast-furigana <?php echo $this->cast->get('furigana') ?>
 
-                        <?php foreach ($this->contents as $content): ?>
-                        p <?php echo $content->title ?>
+                        div.list-group
+                        <?php foreach ($this->contents as $key => $content): ?>
+                            a href="#" class="list-group-item" <?php echo $content->title ?>
                         <?php endforeach; ?>
 
-                    div.col-lg-6
-                        p test
+
+                    div.col-lg-9
+                        div#contents-container
+
+                            <?php foreach ($this->contents as $content): ?>
+                                img.package-image src="<?php echo $content->package_image ?>"
+                                h4 <?php echo $content->title ?>
+                                p <?php echo $content->description ?>
+                            <?php endforeach; ?>
 
 

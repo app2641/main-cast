@@ -28,7 +28,9 @@ class Slim extends Base\AbstractCommand
                 'slimrb %s %s > %s',
                 $option, $slim_path, $temp_path
             );
-            exec($command);
+            exec($command, $result, $output);
+            var_dump($output);
+            exit();
 
             $this->log('success!');
         

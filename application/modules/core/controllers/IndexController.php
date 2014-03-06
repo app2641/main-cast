@@ -49,9 +49,14 @@ class IndexController extends \Zend_Controller_Action
 
         $contents_model = $container->get('ContentsModel');
         $contents = $contents_model->query->fetchAllByCastId($cast_model->get('cast_id'));
+        foreach ($contents as $key => $content) {
+            $package_image = '/resources/images/package/'.substr($content->package, 0, 1).'/'.$content->package.'.jpg';
+            $contents[$key]->package_image = $package_image;
+        }
 
         $md_image   = md5($cast_model->get('name'));
         $cast_image = '/resources/images/cast/'.substr($md_image, 0, 1).'/'.$md_image.'.jpg';
+        $cast_image = (file_exists(ROOT_PATH.$cast_image)) ? $cast_image: '/resources/images/cast/now_printing.jpg';
 
         $this->view->cast     = $cast_model;
         $this->view->contents = $contents;

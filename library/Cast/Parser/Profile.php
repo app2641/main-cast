@@ -275,7 +275,8 @@ class Profile extends ParserAbstract implements ParserInterface
 
             $data[] = array(
                 'name' => $cast_model->get('name'),
-                'dmm_name' => $cast_model->get('dmm_name')
+                'dmm_name' => $cast_model->get('dmm_name'),
+                'cast_id' => $this->cast_id
             );
             \Zend_Registry::set('cast', $data);
         }
